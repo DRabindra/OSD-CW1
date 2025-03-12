@@ -37,6 +37,17 @@ module.exports = {
 
       req.body.password = hashedPassword;
 
+      // fetch role by name
+      // const role = await db.fetchRole(req, res, next);
+      // if (!role) {
+      //   return res.status(400).json({
+      //     success: false,
+      //     message: "Invalid role name. Please provide a valid role name.",
+      //   });
+      // }
+
+      // req.role = role.name;
+
       // Insert user into database
       await db.registerUser(req);
 
@@ -48,7 +59,7 @@ module.exports = {
       console.error("Registration error:", error);
       res.status(500).json({
         success: false,
-        message: "Server error. Please try again later.",
+        message: "Server error! Error adding new user.",
       });
     }
   },
@@ -85,5 +96,14 @@ module.exports = {
         },
       });
     } catch (error) {}
+  },
+
+  logoutUser: async (req, res, next) => {
+    res.clearCookie("access_token", {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "strict",
+    });
+    res.json({ success: true, message: "Logged out successfully." });
   },
 };
